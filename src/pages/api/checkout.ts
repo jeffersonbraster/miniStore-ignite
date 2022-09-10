@@ -5,7 +5,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const price_id = "";
+  const { price_id } = req.body;
+
+  if (req.method !== "POST") {
+    return res.status(405).end();
+  }
+
+  if (!price_id) {
+    return res.status(400).json({ error: "Missing price_id" });
+  }
 
   const successUrl = process.env.NEXT_URL + "/success";
   const cancelUrl = process.env.NEXT_URL + "/";

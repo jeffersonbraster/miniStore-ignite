@@ -1,3 +1,5 @@
+import { useState } from "react";
+import axios from "axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -21,10 +23,23 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
   const { isFallback } = useRouter();
 
-  function handleBuyProduct() {
-    console.log(product.defaultPriceId);
+  async function handleBuyProduct() {
+    try {
+      setIsLoaded(true);
+      const response = await axios.post("/api/checkout", {
+        price_id: product.defaultPriceId,
+      });
+
+      const { checkoutUrl } = response.data;
+
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      setIsLoaded(false);
+      alert("Falhou ao comprar o produto");
+    }
   }
 
   if (isFallback) {
@@ -48,7 +63,9 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button onClick={handleBuyProduct}>Comprar agora</button>
+        <button onClick={handleBuyProduct} disabled={isLoaded}>
+          Comprar agora
+        </button>
       </ProductDetails>
     </ProductContainer>
   );
