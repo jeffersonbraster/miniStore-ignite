@@ -7,7 +7,10 @@ const nextConfig = {
     domains: ["files.stripe.com"],
   },
 
-  experimental: { images: { allowFutureImage: true } },
+  experimental: {
+    images: { allowFutureImage: true },
+    newNextLinkBehavior: true,
+  },
 };
 
 module.exports = nextConfig;
